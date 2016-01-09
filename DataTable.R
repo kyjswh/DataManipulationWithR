@@ -34,6 +34,7 @@ hflights_dt[,paste('carrier',carriers, sep='_') :=
                                         lapply(carriers, function(x) as.numeric(UniqueCarrier == x))]
 str(hflights_dt[,grep('^carrier',names(hflights_dt)),with=FALSE])
 
+
 #Merge Tables
 wdays <- data.table(
     DayOfWeek = 1:7,
@@ -64,6 +65,13 @@ melted_flights <- melt(hflights,
 str(melted_flights)
 head(melted_flights)
 
+
+#Group by operations 
+##.N has special meaning for number of rows in data.table
+hflights_dt[,.(mean_dist=mean(DistanceKMs),sd_dist=sd(DistanceKMs)),by=Dest][order(mean_dist,decreasing = T)]
+hflights_dt[,.N, by=.(Origin,Dest)][order(N,decreasing=T)]
+ 
+
 #Boxplot
 library(ggplot2)
 ggplot(melted_flights,aes(x = variable, y = value)) + geom_boxplot()
@@ -79,3 +87,10 @@ ggplot(melt(df, id.vars = 'Month')) +
       geom_line(aes(x = Month, y = value, color = variable),size=1.2) + 
         scale_x_continuous(breaks=1:12) + 
           theme_bw() + theme(legend.position='top')
+
+
+#wide to long on the data.table
+hflights_melted_db <- melt(hflights_dt, id.vars = c('Month','Origin','Dest'), measure.vars = c('TaxiIn','TaxiOut'))
+hflights_melted_db[variable == 'TaxiIn',
+                    .(mean_val=mean(value,na.rm=T),sd_val=sd(value,na.rm=T)), 
+                          by=.(Month,Origin)][order(Origin,Month)]

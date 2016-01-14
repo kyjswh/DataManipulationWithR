@@ -22,12 +22,16 @@ address(hflights)
 head(hflights$DistanceKMs)
 head(hflights$DistanceKMs)
 
-#You can also vectorize assignment of multiple variables at once
+
+
+
 #Save time and make the codes cleaner and more readable
 hflights_dt[,c('DistanceKMs','DistanceFeets') :=
                                         list(Distance/0.62137, Distance*5280)]
 
 carriers <- unique(hflights_dt$UniqueCarrier)
+
+
 
 #Assign a list of variables to a vector of variable names
 hflights_dt[,paste('carrier',carriers, sep='_') :=
@@ -86,7 +90,7 @@ df <- dcast(melted_flights, Month~variable, fun.aggregate=mean,na.rm=TRUE)
 ggplot(melt(df, id.vars = 'Month')) + 
       geom_line(aes(x = Month, y = value, color = variable),size=1.2) + 
         scale_x_continuous(breaks=1:12) + 
-          theme_bw() + theme(legend.position='top')
+          theme_bw() + theme(legend.poapplsition='top')
 
 
 #wide to long on the data.table
